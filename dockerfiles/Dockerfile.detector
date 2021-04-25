@@ -1,0 +1,98 @@
+FROM nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+LABEL maintainer="Niven"
+
+# setup timezone
+RUN echo 'Asia/Singapore' > /etc/timezone \
+    && ln -s /usr/share/zoneinfo/Asia/Singapore /etc/localtime
+
+# install core linux tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt-utils lsb-release sudo unzip wget ssh vim curl git pkg-config \
+	libcanberra-gtk-module libcanberra-gtk3-module build-essential gcc \
+	libfreetype6-dev libpng-dev libhdf5-serial-dev libcurl3-dev rsync \
+	software-properties-common unzip zip zlib1g-dev apt-utils lsb-release \
+	libx11-dev libxmu-dev libxi-dev libglu1-mesa libglu1-mesa-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && find /usr/local/cuda-10.1/lib64/ -type f -name 'lib*_static.a' -not -name 'libcudart_static.a' -delete \
+    && rm /usr/lib/x86_64-linux-gnu/libcudnn_static_v7.a
+
+# setup your paths
+RUN echo 'export PATH=/usr/local/cuda-10.1/bin:$PATH' >> ~/.bashrc
+RUN echo 'export LD_LIBRARY_PATH=/usr/local/cuda-10.1/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+
+# install dependencies
+RUN apt-get update && apt-get install -y gcc-multilib python3-dev python3-numpy libavcodec-dev \
+    libavformat-dev libswscale-dev libgtk2.0-dev libpng-dev libjpeg-dev libopenexr-dev \
+    libtiff-dev libwebp-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+USER root
+RUN set -xe \
+    && apt-get update && apt-get install -y python3-pip libboost-all-dev python-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# install colcon
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install setuptools
+RUN python3 -m pip install colcon-common-extensions
+
+# setup sources
+RUN sudo apt update && sudo apt install curl gnupg2 lsb-release
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+
+RUN sudo sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
+RUN apt-get update && apt-get install -y ros-eloquent-ros-base --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# install built-in ROS interfaces     
+RUN apt-get update && apt-get install -y ros-eloquent-example-interfaces --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y ros-eloquent-launch* --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# user and permissions
+ARG user=detector
+ARG group=${user}
+ARG uid=1000
+ARG gid=1000
+ARG home=/home/${user}
+RUN mkdir -p /etc/sudoers.d \
+    && groupadd -g ${gid} ${group} \
+    && useradd -d ${home} -u ${uid} -g ${gid} -m -s /bin/bash ${user} \
+    && echo "${user} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/sudoers_${user}
+USER ${user}
+RUN sudo usermod -a -G video ${user}
+
+WORKDIR ${home}
+
+# copy repository into Docker container
+RUN mkdir -p detect-obstacles-ros/detector/
+COPY --chown=${user} ./detector/ detect-obstacles-ros/detector/
+
+# install all required dependencies
+RUN python3 -m pip install -U argcomplete
+RUN python3 -m pip install -r ./detect-obstacles-ros/detector/bin/requirements.txt
+
+# update .bashrc for bash interactive mode
+RUN echo "PATH=${home}/.local/bin:$PATH" >> ${home}/.bashrc
+
+# install opencv
+RUN wget -O opencv.zip https://github.com/opencv/opencv/archive/4.0.0.zip
+RUN wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/4.0.0.zip
+RUN unzip opencv.zip
+RUN unzip opencv_contrib.zip
+RUN mv opencv-4.0.0 opencv
+RUN mv opencv_contrib-4.0.0 opencv_contrib
+RUN cd ~/opencv && mkdir build && cd build && cmake -D CMAKE_BUILD_TYPE=RELEASE \
+	-D CMAKE_INSTALL_PREFIX=/usr/local \
+	-D INSTALL_PYTHON_EXAMPLES=ON \
+	-D INSTALL_C_EXAMPLES=OFF \
+	-D OPENCV_ENABLE_NONFREE=ON \
+	-D OPENCV_EXTRA_MODULES_PATH=~/opencv_contrib/modules \
+	-D PYTHON_EXECUTABLE=~/.virtualenvs/cv/bin/python \
+	-D BUILD_EXAMPLES=ON .. \
+    && make -j4 && sudo make install && sudo ldconfig
+
+# build copilot-daa packages
+RUN /bin/bash -c "cd detect-obstacles-ros/detector/detector; ./build_detector.sh"

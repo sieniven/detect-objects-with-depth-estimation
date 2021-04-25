@@ -1,0 +1,7 @@
+.copilot_daa_data
+*.idea
+*.pyc
+log/
+build/
+install/
+.vscode/

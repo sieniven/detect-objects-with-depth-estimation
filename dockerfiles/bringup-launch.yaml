@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  detector:
+    build:
+      dockerfile: ./dockerfiles/Dockerfile.detector
+      context: ..
+    image: detectorros/detector
+    network_mode: "host"
+    devices:
+      - "/dev/video2:/dev/video2"
+    environment:
+      - DISPLAY=unix$DISPLAY
+    volumes:
+      - /home/detector/detector-docker/
+    stop_signal: SIGINT
+    command: bash -c "cd detect-obstacles-ros/detector/bin && ./bringup.sh"
