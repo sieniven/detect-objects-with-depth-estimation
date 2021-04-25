@@ -3,7 +3,6 @@
 Hello! This is a project I did on developing a software for detection and depth estimation of detected objects using stereo cameras. This software is built on ROS2 architecture that can be incorporated into robotics systems running in ROS framework as their perception capabilities. In this project, I have implemented YOLO-v4 Tiny model as our object detection and classification model. It has been tested to be able to run on the Jetson Nano at ~5 FPS. Below lists some of the capabilities of the software:
 
 * Continuous publishing of live stereo-camera video feeds into ROS2 architecture (DDS-RTPS)
-* Continuous publishing of live bottom-camera video feeds into ROS2 architecture (DDS-RTPS)
 * Stereo image processor to obtain disparity maps and depth maps, for depth estimation
 * Image segmentation, image processing techniques and blob detector on disparity frames
 * Obstacle detection capabilities using Scaled-YOLOv4 (tiny) model
@@ -26,7 +25,7 @@ Author and owner: Niven Sie (sieniven@gmail.com)
 
 ## 1. Getting started
 
-Welcome to my project! This software is verified to be working on the Jetson Nano. For the current software version, it is able to run in a Dockerized environment or locally. For the full setup, installation and deployment guide, refer to the steps below in this markdown file.
+Welcome to my project! This software is verified to be working on a Jetson Nano. For the current software version, it is able to run in a Dockerized environment or locally. For the full setup, installation and deployment guide, refer to the steps below in this markdown file.
 
 Please note that this repository should be stored in ***/home/$USER***
 
