@@ -15,11 +15,11 @@ Author and owner: Niven Sie (sieniven@gmail.com)
    1. [Getting started](#markdown-header-1-getting-started)
    2. [Setup](#markdown-header-2-setup)
    3. [Installing](#markdown-header-3-installing)
-      1. [Installing on on-board computer](#markdown-header-31-installing-on-on-board-computer)
+      1. [Installing on computer](#markdown-header-31-installing-on-computer)
       2. [Installing using Docker environment](#markdown-header-32-installing-using-docker-environment)
    4. [Run](#markdown-header-4-run)
-      1. [Run CoPilot DAA locally on Jetson Nano](#markdown-header-41-run-copilot-daa-locally-on-jetson-nano)
-      2. [Run CoPilot DAA on Docker](#markdown-header-42-run-copilot-daa-on-docker)
+      1. [Run software locally](#markdown-header-41-run-software-locally)
+      2. [Run software on Docker](#markdown-header-42-run-software-docker)
    5. [Acknowledgments](#markdown-header-7-acknowledgments)
 
 
@@ -155,7 +155,7 @@ The following step-by-step instructions will guide you on the installation proce
 	./bringup.sh
 	```
 
-7. To launch CoPilot DAA processes manually, there are 3 main processes to run.
+7. To launch detector processes manually, there are 3 main processes to run.
 
 	* Run perception. The main process that publishes raw camera frames into the ROS2 DDS-RTPS, and 
 		``` bash
