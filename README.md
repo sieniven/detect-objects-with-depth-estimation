@@ -1,4 +1,4 @@
-# Detect Objects with Depth Estimation
+# Detect objects with depth estimation
 
 Application for detecting and estimating the depth of detected objects using stereo cameras. The application is built on ROS2 framework that can be incorporated into robotics systems as their perception capabilities. In the application, YOLO-v4 Tiny model is used as the object detection and classification model. It has been tested to be able to run on the Jetson Nano at ~5 FPS. Below lists some of the application features:
 
