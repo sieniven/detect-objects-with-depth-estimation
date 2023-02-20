@@ -1,4 +1,4 @@
-# Detect Objects with Depth Estimation on ROS2 Architecture
+# Detect Objects with Depth Estimation
 
 Hello! This is a project I did on developing a software for detection and depth estimation of detected objects using stereo cameras. This software is built on ROS2 architecture that can be incorporated into robotics systems running in ROS framework as their perception capabilities. In this project, I have implemented YOLO-v4 Tiny model as our object detection and classification model. It has been tested to be able to run on the Jetson Nano at ~5 FPS. Below lists some of the capabilities of the software:
 
