@@ -1,6 +1,6 @@
 # Detect Objects with Depth Estimation
 
-Hello! This is a project I did on developing a software for detection and depth estimation of detected objects using stereo cameras. This software is built on ROS2 architecture that can be incorporated into robotics systems running in ROS framework as their perception capabilities. In this project, I have implemented YOLO-v4 Tiny model as our object detection and classification model. It has been tested to be able to run on the Jetson Nano at ~5 FPS. Below lists some of the capabilities of the software:
+Application for detecting and estimating the depth of detected objects using stereo cameras. The application is built on ROS2 framework that can be incorporated into robotics systems as their perception capabilities. In the application, YOLO-v4 Tiny model is used as the object detection and classification model. It has been tested to be able to run on the Jetson Nano at ~5 FPS. Below lists some of the application features:
 
 * Continuous publishing of live stereo-camera video feeds into ROS2 architecture (DDS-RTPS)
 * Stereo image processor to obtain disparity maps and depth maps, for depth estimation
@@ -25,9 +25,7 @@ Author and owner: Niven Sie (sieniven@gmail.com)
 
 ## 1. Getting started
 
-Welcome to my project! This software is verified to be working on a Jetson Nano. For the current software version, it is able to run in a Dockerized environment or locally. For the full setup, installation and deployment guide, refer to the steps below in this markdown file.
-
-Please note that this repository should be stored in ***/home/$USER***
+The software has been deployed on a Jetson Nano, and can be deployed in a Docker container or locally. For the full setup, installation and deployment guide, refer to the steps below.
 
 ## 2. Setup
 
@@ -175,7 +173,7 @@ The following step-by-step instructions will guide you on the installation proce
 
 ### 4.2 Run software on Docker
 
-To run the softwre with Docker, we use Docker-compose to bring up our Docker container and run the software as services inside the container. This file is located in /detect-obstacles-ros/dockerfiles/bringup-launch.yaml.
+To run the softwre with Docker, we use Docker-compose to bring up our Docker container and run the software as services inside the container. The docker-compose file is located in /detect-obstacles-ros/dockerfiles/bringup-launch.yaml.
 
 1. Ensure that video port connected to stereo cameras is configured correctly in docker-compose file. This video port number is also the video index port number that openCV uses in their VideoCapture initialization function. For example, if the video port connected is index 2, then under detector services, ensure that "devices" is configured at **/dev/video2**:/dev/video2 (only the first port matters, leave the second port after the ":" as it is).
 
